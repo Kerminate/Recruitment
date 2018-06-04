@@ -1,14 +1,32 @@
-/* eslint-disable no-unused-vars */
 import React from 'react'
-import { List, InputItem, WingBlank, WhiteSpace, Button, Radio } from 'antd-mobile'
+import { List, InputItem, WhiteSpace, Button, Radio } from 'antd-mobile'
+import { connect } from 'react-redux'
 import Logo from '../../component/logo/logo'
+import { register } from '../../redux/user.redux'
+
+@connect(
+  state => state.user,
+  { register }
+)
 
 class Register extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
+      user: '',
+      pwd: '',
+      repeatpwd: '',
       type: 'genius'
     }
+    this.handleRegister = this.handleRegister.bind(this)
+  }
+  handleChange (key, value) {
+    this.setState({
+      [key]: value
+    })
+  }
+  handleRegister () {
+    this.props.register(this.state)
   }
   render () {
     const RadioItem = Radio.RadioItem
@@ -16,16 +34,17 @@ class Register extends React.Component {
       <div>
         <Logo></Logo>
         <List>
-          <InputItem>用户名</InputItem>
+          { this.props.msg ? <p className='errro-msg'>{this.props.msg}</p> : null }
+          <InputItem onChange={v => this.handleChange('user', v)}>用户名</InputItem>
           <WhiteSpace></WhiteSpace>
-          <InputItem>密码</InputItem>
+          <InputItem onChange={v => this.handleChange('pwd', v)} type='password'>密码</InputItem>
           <WhiteSpace></WhiteSpace>
-          <InputItem>确认密码</InputItem>
+          <InputItem onChange={v => this.handleChange('repeatpwd', v)} type='password'>确认密码</InputItem>
           <WhiteSpace></WhiteSpace>
-          <RadioItem checked={this.state.type === 'genius'}>牛人</RadioItem>
-          <RadioItem checked={this.state.type === 'boss'}>BOSS</RadioItem>
+          <RadioItem checked={this.state.type === 'genius'} onChange={() => this.handleChange('type', 'genius')}>牛人</RadioItem>
+          <RadioItem checked={this.state.type === 'boss'} onChange={() => this.handleChange('type', 'boss')}>BOSS</RadioItem>
           <WhiteSpace></WhiteSpace>
-          <Button type='primary'>注册</Button>
+          <Button type='primary' onClick={this.handleRegister}>注册</Button>
         </List>
       </div>
     )

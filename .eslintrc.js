@@ -10,7 +10,7 @@ module.exports = {
     browser: true,
   },
   // https://github.com/standard/standard/blob/master/docs/RULES-en.md
-  extends: 'standard',
+  extends: ['standard', 'react-app'],
   // required to lint *.vue files
   plugins: [
     'html'
@@ -21,6 +21,7 @@ module.exports = {
     'generator-star-spacing': 'off',
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'prefer-const': 'error'
+    'prefer-const': 'error',
+    'jsx-a11y/heading-has-content': 0
   }
 }

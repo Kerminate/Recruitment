@@ -1,16 +1,7 @@
+// 合并所有 reducer 并且返回
 import { combineReducers } from 'redux'
+import { user } from './redux/user.redux'
 
-function todos (state = []) {
-  return state
-}
-
-function visiblity (state = []) {
-  return state
-}
-
-const todoApp = combineReducers({
-  todos,
-  visiblity
+export default combineReducers({
+  user
 })
-
-export default todoApp

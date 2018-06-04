@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React from 'react'
 import { List, InputItem, WingBlank, WhiteSpace, Button } from 'antd-mobile'
 import Logo from '../../component/logo/logo'
@@ -23,6 +22,7 @@ class Login extends React.Component {
             <WhiteSpace></WhiteSpace>
             <InputItem>密码</InputItem>
           </List>
+          <WhiteSpace></WhiteSpace>
           <Button type='primary'>登录</Button>
           <WhiteSpace></WhiteSpace>
           <Button onClick={this.register} type='primary'>注册</Button>
