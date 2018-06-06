@@ -17,10 +17,10 @@ const list = async (ctx) => {
 
 const info = async (ctx) => {
   let res
-  const { _id } = ctx.session.profile
-  if (!_id) {
+  if (!ctx.session.profile || !ctx.session.profile._id) {
     res = { code: 1 }
   } else {
+    const { _id } = ctx.session.profile
     const user = await User.findOne({_id}, _filter)
     if (!user) {
       res = {
@@ -33,6 +33,26 @@ const info = async (ctx) => {
         data: user
       }
     }
+  }
+  ctx.body = res
+}
+
+const update = async (ctx) => {
+  const userId = ctx.session.profile._id
+  let res
+  if (!userId) {
+    res = { code: 1 }
+  } else {
+    const body = ctx.request.body
+    await User.findByIdAndUpdate(userId, body, {new: true}).exec()
+      .then((doc) => {
+        const data = only(doc, 'user type avatar desc title')
+        res = { code: 0, data }
+      })
+      .catch((e) => {
+        res = { code: 1 }
+        console.log(e)
+      })
   }
   ctx.body = res
 }
@@ -91,6 +111,7 @@ const login = async (ctx) => {
 
 router.get('/list', list)
 router.get('/info', info)
+router.post('/update', update)
 router.post('/register', register)
 router.post('/login', login)
 

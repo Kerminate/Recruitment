@@ -12,7 +12,6 @@ import { connect } from 'react-redux'
 class AuthRoute extends React.Component {
   componentDidMount () {
     const publicList = ['/login', '/register']
-    console.log(this.props)
     const pathname = this.props.location.pathname
     if (publicList.indexOf(pathname) > -1) {
       return null
@@ -20,9 +19,7 @@ class AuthRoute extends React.Component {
     // 获取用户信息
     axios.get('/user/info')
       .then((res) => {
-        console.log(res)
         if (res.status === 200) {
-          console.log(res.data)
           if (res.data.code === 0) {
             this.props.loadData(res.data.data)
           } else {
