@@ -11,8 +11,12 @@ const router = new Router({
 })
 
 const list = async (ctx) => {
-  const list = await User.find({})
-  ctx.body = list
+  const { type } = ctx.query
+  const list = await User.find({type})
+  ctx.body = {
+    code: 0,
+    data: list
+  }
 }
 
 const info = async (ctx) => {
