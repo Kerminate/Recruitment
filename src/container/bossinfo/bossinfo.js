@@ -15,7 +15,7 @@ class BossInfo extends React.Component {
     super(props)
     this.state = {
       title: '',
-      name: '',
+      company: '',
       money: '',
       desc: ''
     }
@@ -34,7 +34,7 @@ class BossInfo extends React.Component {
         <NavBar mode='dark'>Boss完善信息页</NavBar>
         <AvatarSelector selectAvatar={(img) => this.setState({ avatar: img })}></AvatarSelector>
         <InputItem onChange={(v) => this.onChange('title', v)}>招聘职位</InputItem>
-        <InputItem onChange={(v) => this.onChange('name', v)}>公司名称</InputItem>
+        <InputItem onChange={(v) => this.onChange('company', v)}>公司名称</InputItem>
         <InputItem onChange={(v) => this.onChange('money', v)}>职位薪资</InputItem>
         <TextareaItem onChange={(v) => this.onChange('desc', v)} rows={3} autoHeight title='职位要求'></TextareaItem>
         <Button type='primary' onClick={() => this.props.update(this.state)}>保存</Button>

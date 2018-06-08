@@ -113,11 +113,18 @@ const login = async (ctx) => {
   ctx.body = info
 }
 
+// 登出
+const logout = async (ctx) => {
+  delete ctx.session.profile
+  ctx.body = { code: 0 }
+}
+
 router.get('/list', list)
 router.get('/info', info)
 router.post('/update', update)
 router.post('/register', register)
 router.post('/login', login)
+router.post('/logout', logout)
 
 function md5Pwd (pwd) {
   const salt = 'kpl_is_very_good2342!#*?:@~~'

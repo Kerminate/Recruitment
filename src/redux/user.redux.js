@@ -3,6 +3,7 @@ import { getRedirectPath } from '../util'
 
 const AUTH_SUCCESS = 'AUTH_SUCCESS'
 const LOAD_DATA = 'LOAD_DATA'
+const LOGOUT = 'LOGOUT'
 const ERROR_MSG = 'ERROR_MSG'
 
 const initState = {
@@ -19,6 +20,8 @@ export function user (state = initState, action) {
       return { ...state, msg: '', redirectTo: getRedirectPath(action.payload), ...action.payload }
     case LOAD_DATA:
       return { ...state, ...action.payload }
+    case LOGOUT:
+      return { ...initState, redirectTo: '/login' }
     case ERROR_MSG:
       return { ...state, isAuth: false, msg: action.msg }
     default:
@@ -28,6 +31,10 @@ export function user (state = initState, action) {
 
 function authSuccess (data) {
   return { type: AUTH_SUCCESS, payload: data }
+}
+
+function logout () {
+  return { type: LOGOUT }
 }
 
 function errorMsg (msg) {
@@ -40,10 +47,8 @@ export function loadData (userinfo) {
 
 export function update (data) {
   return dispatch => {
-    console.log(data)
     axios.post('/user/update', data)
       .then((res) => {
-        console.log(res)
         if (res.status === 200 && res.data.code === 0) {
           dispatch(authSuccess(res.data.data))
         } else {
@@ -82,6 +87,22 @@ export function register ({ user, pwd, repeatpwd, type }) {
           dispatch(authSuccess({ user, pwd, type }))
         } else {
           dispatch(errorMsg(res.data.msg))
+        }
+      })
+  }
+}
+
+export function logoutSubmit () {
+  if (!user) {
+    return errorMsg('没有用户登录！')
+  }
+  return dispatch => {
+    axios.post('/user/logout')
+      .then((res) => {
+        if (res.status === 200 && res.data.code === 0) {
+          dispatch(logout())
+        } else {
+          dispatch(errorMsg('登出失败'))
         }
       })
   }
