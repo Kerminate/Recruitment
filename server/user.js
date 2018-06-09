@@ -3,6 +3,7 @@ const utils = require('utility')
 const only = require('only')
 const model = require('./model')
 const User = model.getModel('user')
+const Chat = model.getModel('chat')
 
 const _filter = { pwd: 0, __v: 0 }
 
@@ -25,7 +26,7 @@ const info = async (ctx) => {
     res = { code: 1 }
   } else {
     const { _id } = ctx.session.profile
-    const user = await User.findOne({_id}, _filter)
+    const user = await User.findOne({_id}, _filter).exec()
     if (!user) {
       res = {
         code: 1,
@@ -36,6 +37,24 @@ const info = async (ctx) => {
         code: 0,
         data: user
       }
+    }
+  }
+  ctx.body = res
+}
+
+const getmsglist = async (ctx) => {
+  let res
+  // const user = ctx.session.profile._id
+  const list = await Chat.find({}).exec()
+  if (!list) {
+    res = {
+      code: 1,
+      msg: '后端报错了'
+    }
+  } else {
+    res = {
+      code: 0,
+      msgs: list
     }
   }
   ctx.body = res
@@ -121,6 +140,7 @@ const logout = async (ctx) => {
 
 router.get('/list', list)
 router.get('/info', info)
+router.get('/getmsglist', getmsglist)
 router.post('/update', update)
 router.post('/register', register)
 router.post('/login', login)

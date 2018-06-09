@@ -2,6 +2,8 @@ const Koa = require('koa')
 const session = require('koa-session')
 const bodyparser = require('koa-body')
 const router = require('./user')
+const model = require('./model')
+const Chat = model.getModel('chat')
 
 const app = new Koa()
 
@@ -20,6 +22,30 @@ app.use(bodyparser({
 
 app.use(router.routes()).use(router.allowedMethods())
 
-app.listen(9093, () => {
+const server = require('http').Server(app.callback())
+const io = require('socket.io')(server)
+
+io.on('connection', (socket) => {
+  console.log('user login')
+  socket.on('sendmsg', async (data) => {
+    const { from, to, msg } = data
+    const chatid = [from, to].sort().join('_')
+    const newChat = new Chat({
+      chatid,
+      from,
+      to,
+      content: msg
+    })
+    try {
+      const doc = await newChat.save()
+      io.emit('recvmsg', Object.assign({}, doc._doc))
+      console.log(doc)
+    } catch (e) {
+      console.log(e)
+    }
+  })
+})
+
+server.listen(9093, () => {
   console.log('Node app start at 9093')
 })
