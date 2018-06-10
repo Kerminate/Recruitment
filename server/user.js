@@ -44,8 +44,13 @@ const info = async (ctx) => {
 
 const getmsglist = async (ctx) => {
   let res
-  // const user = ctx.session.profile._id
-  const list = await Chat.find({}).exec()
+  const users = {}
+  const user = ctx.session.profile._id
+  const userdoc = await User.find({}).exec()
+  userdoc.forEach((v) => {
+    users[v._id] = { name: v.user, avatar: v.avatar }
+  })
+  const list = await Chat.find({ '$or': [{from: user}, {to: user}] }).exec()
   if (!list) {
     res = {
       code: 1,
@@ -54,7 +59,8 @@ const getmsglist = async (ctx) => {
   } else {
     res = {
       code: 0,
-      msgs: list
+      msgs: list,
+      users: users
     }
   }
   ctx.body = res
