@@ -22,6 +22,7 @@ module.exports = {
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'prefer-const': 'error',
-    'jsx-a11y/heading-has-content': 0
+    'jsx-a11y/heading-has-content': 0,
+    'jsx-a11y/accessible-emoji': 0
   }
 }

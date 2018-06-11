@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { List, InputItem, NavBar, Icon } from 'antd-mobile'
+import { List, InputItem, NavBar, Icon, Grid } from 'antd-mobile'
 import { connect } from 'react-redux'
 import { getMsgList, sendMsg, recvMsg } from '../../redux/chat.redux'
+import { getChatId } from '../../util'
 
 @connect(
   state => state,
@@ -12,7 +13,7 @@ class Chat extends Component {
     super(props)
     this.state = {
       text: '',
-      msg: []
+      showEmoji: false
     }
   }
   componentDidMount () {
@@ -20,6 +21,12 @@ class Chat extends Component {
       this.props.getMsgList()
       this.props.recvMsg()
     }
+    this.fixCarousel()
+  }
+  fixCarousel () {
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'))
+    }, 0)
   }
   handleSubmit () {
     const from = this.props.user._id
@@ -29,12 +36,18 @@ class Chat extends Component {
     this.setState({ text: '' })
   }
   render () {
+    const emoji = '😄 😃 😀 😊 😉 😍 😘 😚 😗 😙 😜 😝 😛 😳 😁 😔 😌 😒 😞 😣 😢 😂 😭 😪 😥 😰 😅 😓 😩 😫 😨 😱 😠 😡 😤 😖 😆 😋 😷 😎 😴 😵 😲 😟 😦 😧 😈 👿 😮 😬 😐 😕 😯 😶 😇 😏 😑 👲 👳 👮 👷 💂 👶 👦 👧 👨 👩 👴 👵 👱 👼 👸 😺 😸 😻 😽 😼 🙀 😿 😹 😾 👹 👺 🙈 🙉 🙊 👽 💀 💩 🔥 ✨ 🌟 💫 💥 💢 💤 💨 👂 👀 👃 👅 👄 👍 👎 👌 👊 ✊ ✌ 👋 ✋ 👐 👆 👇 👉 👈 🙌 🙏 👏 💪 🚶 🏃 💃 🙆 🙅 💁 🙋 💆 💇 💅 👰 🙎 🙍 🙇 🎩'
+      .split(' ')
+      .filter(v => v)
+      .map((v) => ({ text: v }))
     const userid = this.props.match.params.user
     const Item = List.Item
     const users = this.props.chat.users
     if (!users[userid]) {
       return null
     }
+    const chatid = getChatId(userid, this.props.user._id)
+    const chatmsgs = this.props.chat.chatmsg.filter((v) => v.chatid === chatid)
     return (
       <div id='chat-page'>
         <NavBar
@@ -44,7 +57,7 @@ class Chat extends Component {
             this.props.history.goBack()
           }}
         >{ users[userid].name }</NavBar>
-        { this.props.chat.chatmsg.map((v) => {
+        { chatmsgs.map((v) => {
           const avatar = require(`../img/${users[v.from].avatar}.png`)
           return v.from === userid ? (
             <List key={v._id}>
@@ -64,9 +77,33 @@ class Chat extends Component {
               onChange={(v) => {
                 this.setState({ text: v })
               }}
-              extra={<span onClick={() => this.handleSubmit()}>发送</span>}
+              extra={
+                <div>
+                  <span
+                    style={{marginTop: '15px'}}
+                    onClick={() => {
+                      this.setState({ showEmoji: !this.state.showEmoji })
+                      this.fixCarousel()
+                    }}
+                  >😃</span>
+                  <span onClick={() => this.handleSubmit()}>发送</span>
+                </div>
+              }
             ></InputItem>
           </List>
+          { this.state.showEmoji
+            ? <Grid
+              className='emoji'
+              data={emoji}
+              columnNum={9}
+              carouselMaxRow={4}
+              isCarousel={true}
+              onClick={(el) => {
+                this.setState({
+                  text: this.state.text + el.text
+                })
+              }}
+            ></Grid> : null }
         </div>
       </div>
     )
