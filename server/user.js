@@ -144,6 +144,29 @@ const logout = async (ctx) => {
   ctx.body = { code: 0 }
 }
 
+const readmsg = async (ctx) => {
+  let info
+  const userid = ctx.session.profile._id
+  const { from } = ctx.request.body
+  const doc = await Chat.update(
+    { from, to: userid },
+    { '$set': { read: true } },
+    { 'multi': true }
+  ).exec()
+  if (!doc) {
+    info = {
+      code: 1,
+      msg: '修改失败'
+    }
+  } else {
+    info = {
+      code: 0,
+      num: doc.nModified
+    }
+  }
+  ctx.body = info
+}
+
 router.get('/list', list)
 router.get('/info', info)
 router.get('/getmsglist', getmsglist)
@@ -151,6 +174,7 @@ router.post('/update', update)
 router.post('/register', register)
 router.post('/login', login)
 router.post('/logout', logout)
+router.post('/readmsg', readmsg)
 
 function md5Pwd (pwd) {
   const salt = 'kpl_is_very_good2342!#*?:@~~'
