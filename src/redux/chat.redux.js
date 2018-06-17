@@ -54,7 +54,6 @@ export function readMsg (from) {
 export function recvMsg () {
   return (dispatch, getState) => {
     socket.on('recvmsg', (data) => {
-      console.log('recvmsg', data)
       const userid = getState().user._id
       dispatch(msgRecv(data, userid))
     })

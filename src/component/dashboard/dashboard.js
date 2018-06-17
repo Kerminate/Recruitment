@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { NavBar } from 'antd-mobile'
-import { Route, Switch } from 'react-router-dom'
+import QueueAnim from 'rc-queue-anim'
+import { Route, Redirect } from 'react-router-dom'
 import NavLinkBar from '../navlink/navlink'
 import { getMsgList, recvMsg } from '../../redux/chat.redux'
 import Boss from '../boss/boss'
@@ -55,19 +56,18 @@ class Dashboard extends Component {
         component: User
       }
     ]
-    return (
+    const page = navList.find((v) => v.path === pathname)
+    return page ? (
       <div>
-        <NavBar className='fixed-header' mode='dark'>{navList.find(v => v.path === pathname).title}</NavBar>
+        <NavBar className='fixed-header' mode='dark'>{page.title}</NavBar>
         <div style={{marginTop: 45}}>
-          <Switch>
-            { navList.map((v) => (
-              <Route key={v.path} path={v.path} component={v.component}></Route>
-            )) }
-          </Switch>
+          <QueueAnim type='scaleX' duration={800} >
+            <Route key={page.path} path={page.path} component={page.component}></Route>
+          </QueueAnim>
         </div>
         <NavLinkBar data={navList}></NavLinkBar>
       </div>
-    )
+    ) : <Redirect to='/msg'></Redirect>
   }
 }
 export default Dashboard
